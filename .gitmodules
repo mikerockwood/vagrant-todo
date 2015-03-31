@@ -1,0 +1,30 @@
+[submodule "salt/formulas/base-formula"]
+	path = salt/formulas/base-formula
+	url = git@bitbucket.org:newtopia2014/base-formula.git
+[submodule "salt/formulas/nginx-formula"]
+	path = salt/formulas/nginx-formula
+	url = git@bitbucket.org:newtopia2014/nginx-formula.git
+[submodule "salt/formulas/odbc-formula"]
+	path = salt/formulas/odbc-formula
+	url = git@bitbucket.org:newtopia2014/odbc-formula.git
+[submodule "salt/formulas/vim-formula"]
+	path = salt/formulas/vim-formula
+	url = git@bitbucket.org:newtopia2014/vim-formula.git
+[submodule "salt/formulas/git-formula"]
+	path = salt/formulas/git-formula
+	url = git@bitbucket.org:newtopia2014/git-formula.git
+[submodule "salt/formulas/redis-formula"]
+	path = salt/formulas/redis-formula
+	url = git@bitbucket.org:newtopia2014/redis-formula.git
+[submodule "salt/formulas/nodejs-formula"]
+	path = salt/formulas/nodejs-formula
+	url = git@bitbucket.org:newtopia2014/nodejs-formula.git
+[submodule "salt/formulas/postgres-formula"]
+	path = salt/formulas/postgres-formula
+	url = git@bitbucket.org:newtopia2014/postgres-formula.git
+[submodule "salt/formulas/golang-formula"]
+	path = salt/formulas/golang-formula
+	url = git@bitbucket.org:newtopia2014/golang-formula.git
+[submodule "salt/formulas/jdk-formula"]
+	path = salt/formulas/jdk-formula
+	url = git@bitbucket.org:newtopia2014/jdk-formula.git

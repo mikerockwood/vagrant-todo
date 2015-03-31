@@ -1,0 +1,28 @@
+failhard: True
+
+file_client: local
+local: true
+
+grains:
+  roles:
+    - dev-server
+
+file_roots:
+  base:
+    - /srv/salt
+    - /srv/formulas/base-formula
+    - /srv/formulas/vim-formula
+    - /srv/formulas/nginx-formula
+    - /srv/formulas/redis-formula
+    - /srv/formulas/nodejs-formula
+    - /srv/formulas/odbc-formula
+    - /srv/formulas/git-formula
+    - /srv/formulas/jdk-formula
+    - /srv/formulas/golang-formula
+    - /srv/formulas/postgres-formula
+
+state_verbose: False
+
+state_output: mixed
+
+log_level: info
