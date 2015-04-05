@@ -33,7 +33,7 @@ var TodoContainer = React.createClass({displayName: "TodoContainer",
       dataType: "json",
       url: this.props.url + "/" + idToEdit,
       type: "PUT",
-      data: JSON.stringify(itemToEdit),
+      data: JSON.stringify(itemToEdit), // TODO: There is a syntax error happening here, fix it
       success: function(data) {
         this.setState({data: data});
       }.bind(this),
@@ -74,17 +74,16 @@ var TodoContainer = React.createClass({displayName: "TodoContainer",
 });
 
 var TodoList = React.createClass({displayName: "TodoList",
-  handleEdit: function(idToEdit) {
-    var itemToEdit = this.state.itemToEdit; // TODO: This doesn't yet work, probably linked to the bind(this) below
-    this.props.onTodoEdit(idToEdit, {Item: itemToEdit});
-  }.bind(this),
+  handleEdit: function(itemToEdit) {
+    this.props.onTodoEdit(this.props.todoId, itemToEdit);
+  },
   handleDelete: function(itemToDelete) {
     this.props.onTodoDelete(itemToDelete);
   },
   render: function() {
     var todoNodes = this.props.data.map(function(todo, index) {
       return (
-        React.createElement(Todo, {key: index, onEdit: this.handleEdit.bind(this, todo.Id)}, 
+        React.createElement(Todo, {key: index, todoId: todo.Id, onEdit: this.handleEdit}, 
           todo.Item, 
           React.createElement("button", {onClick: this.handleDelete.bind(this, todo.Id)}, "Del")
         )
@@ -100,10 +99,7 @@ var TodoList = React.createClass({displayName: "TodoList",
 
 var Todo = React.createClass({displayName: "Todo",
   handleInput: function() {
-    var update = React.findDOMNode(this.refs.todoItem).value;
-    this.setState({itemToEdit: update});
-
-    this.props.onEdit();
+    this.props.onEdit(React.findDOMNode(this.refs.todoItem).value);
   },
   render: function() {
     return (
@@ -122,7 +118,7 @@ var TodoAdd = React.createClass({displayName: "TodoAdd",
     if(!itemToAdd) {
       return;
     }
-    this.props.onTodoSubmit({Item: itemToAdd});
+    this.props.onTodoSubmit({Item: itemToAdd})
     React.findDOMNode(this.refs.itemRef).value = '';
     return;
   },

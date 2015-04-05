@@ -77,7 +77,7 @@ var TodoList = React.createClass({displayName: "TodoList",
   handleEdit: function(idToEdit) {
     var itemToEdit = this.state.itemToEdit; // TODO: This doesn't yet work, probably linked to the bind(this) below
     this.props.onTodoEdit(idToEdit, {Item: itemToEdit});
-  }.bind(this),
+  },
   handleDelete: function(itemToDelete) {
     this.props.onTodoDelete(itemToDelete);
   },
@@ -89,18 +89,18 @@ var TodoList = React.createClass({displayName: "TodoList",
           React.createElement("button", {onClick: this.handleDelete.bind(this, todo.Id)}, "Del")
         )
       );
-    }.bind(this)); // TODO: Figure out why this complains that this.props.data.map is not a function when you DELETE
+    }); // TODO: Figure out why this complains that this.props.data.map is not a function when you DELETE
     return (
       React.createElement("ul", {className: "todoList"}, 
         todoNodes
       )
     );
-  }
+  }.bind(this)
 });
 
 var Todo = React.createClass({displayName: "Todo",
   handleInput: function() {
-    var update = React.findDOMNode(this.refs.todoItem).value;
+    var update = React.findDOMNode(this.refs.todoItem).value.trim();
     this.setState({itemToEdit: update});
 
     this.props.onEdit();

@@ -19,7 +19,23 @@ var TodoContainer = React.createClass({
       type: "POST",
       data: JSON.stringify(item), // TODO: There is a syntax error happening here, fix it
       success: function(data) {
-        this.setState({data: data})
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString())
+      }.bind(this)
+    });
+
+    this.loadTodoListFromServer();
+  },
+  handleTodoEdit: function(idToEdit, itemToEdit) {
+    $.ajax({
+      dataType: "json",
+      url: this.props.url + "/" + idToEdit,
+      type: "PUT",
+      data: JSON.stringify(itemToEdit),
+      success: function(data) {
+        this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString())
@@ -31,44 +47,36 @@ var TodoContainer = React.createClass({
       url: this.props.url + "/" + itemToDelete,
       type: "DELETE",
       success: function(data) {
-        this.setState({data: data})
+        this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString())
       }.bind(this)
     });
+
+    this.loadTodoListFromServer();
   },
   getInitialState: function() {
     return {data: []};
   },
   componentDidMount: function() {
     this.loadTodoListFromServer();
-    setInterval(this.loadTodoListFromServer, this.props.pollInterval); // HACK: Change this to websockets or similar
   },
   render: function() {
     return (
       <div className="todoContainer">
-        <h1>TodoContainer.</h1>
-        <TodoList data={this.state.data} onTodoDelete={this.handleTodoDelete} />
+        <h1>Newtopia To Do List:</h1>
+        <TodoList data={this.state.data} onTodoEdit={this.handleTodoEdit} onTodoDelete={this.handleTodoDelete} />
         <TodoAdd onTodoSubmit={this.handleTodoSubmit} />
       </div>
     );
   }
 });
 
-var Todo = React.createClass({
-  render: function() {
-    return (
-      <div className="todo" ref="todoItem">
-        {this.props.children}
-      </div>
-    );
-  }
-});
-
 var TodoList = React.createClass({
-  handleEdit: function(itemToEdit) {
-    console.log("bla");
+  handleEdit: function(idToEdit) {
+    var itemToEdit = this.state.itemToEdit; // FIXME: This doesn't yet work, probably linked to the bind(this) below
+    this.props.onTodoEdit(idToEdit, {Item: itemToEdit});
   },
   handleDelete: function(itemToDelete) {
     this.props.onTodoDelete(itemToDelete);
@@ -76,17 +84,32 @@ var TodoList = React.createClass({
   render: function() {
     var todoNodes = this.props.data.map(function(todo, index) {
       return (
-        <Todo key={index}>
+        <Todo key={index} onEdit={this.handleEdit.bind(this, todo.Id)}>
           {todo.Item}
-          <button onClick={this.handleEdit.bind(this, todo.Id)}>Edit</button>
           <button onClick={this.handleDelete.bind(this, todo.Id)}>Del</button>
         </Todo>
       );
     }.bind(this)); // TODO: Figure out why this complains that this.props.data.map is not a function when you DELETE
     return (
-      <div className="todoList">
+      <ul className="todoList">
         {todoNodes}
-      </div>
+      </ul>
+    );
+  }
+});
+
+var Todo = React.createClass({
+  handleInput: function() {
+    var update = React.findDOMNode(this.refs.todoItem).value;
+    this.setState({itemToEdit: update});
+
+    this.props.onEdit();
+  },
+  render: function() {
+    return (
+      <li className="todo" contentEditable={true} onInput={this.handleInput} ref="todoItem">
+        {this.props.children}
+      </li>
     );
   }
 });
@@ -99,7 +122,7 @@ var TodoAdd = React.createClass({
     if(!itemToAdd) {
       return;
     }
-    this.props.onTodoSubmit({Item: itemToAdd})
+    this.props.onTodoSubmit({Item: itemToAdd});
     React.findDOMNode(this.refs.itemRef).value = '';
     return;
   },
@@ -114,6 +137,6 @@ var TodoAdd = React.createClass({
 });
 
 React.render(
-  <TodoContainer url="/todo" pollInterval={5000} />, // HACK: replace polling with websockets
+  <TodoContainer url="/todo" />,
   document.getElementById('content')
 );

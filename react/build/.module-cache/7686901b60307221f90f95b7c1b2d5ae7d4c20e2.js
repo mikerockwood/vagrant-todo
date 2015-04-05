@@ -77,7 +77,7 @@ var TodoList = React.createClass({displayName: "TodoList",
   handleEdit: function(idToEdit) {
     var itemToEdit = this.state.itemToEdit; // TODO: This doesn't yet work, probably linked to the bind(this) below
     this.props.onTodoEdit(idToEdit, {Item: itemToEdit});
-  }.bind(this),
+  },
   handleDelete: function(itemToDelete) {
     this.props.onTodoDelete(itemToDelete);
   },
@@ -100,7 +100,7 @@ var TodoList = React.createClass({displayName: "TodoList",
 
 var Todo = React.createClass({displayName: "Todo",
   handleInput: function() {
-    var update = React.findDOMNode(this.refs.todoItem).value;
+    var update = React.findDOMNode(this.refs.todoItem).value.trim();
     this.setState({itemToEdit: update});
 
     this.props.onEdit();

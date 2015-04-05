@@ -100,7 +100,7 @@ var TodoList = React.createClass({displayName: "TodoList",
 
 var Todo = React.createClass({displayName: "Todo",
   handleInput: function() {
-    var update = React.findDOMNode(this.refs.todoItem).value;
+    var update = React.findDOMNode(this.refs.todoItem).value.trim();
     this.setState({itemToEdit: update});
 
     this.props.onEdit();

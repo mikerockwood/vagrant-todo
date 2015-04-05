@@ -28,19 +28,8 @@ var TodoContainer = React.createClass({displayName: "TodoContainer",
 
     this.loadTodoListFromServer();
   },
-  handleTodoEdit: function(idToEdit, itemToEdit) {
-    $.ajax({
-      dataType: "json",
-      url: this.props.url + "/" + idToEdit,
-      type: "PUT",
-      data: JSON.stringify(itemToEdit),
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString())
-      }.bind(this)
-    });
+  handleTodoEdit: function(itemToEdit) {
+    console.log("Edit todo #" + itemToEdit);
   },
   handleTodoDelete: function(itemToDelete) {
     $.ajax({
@@ -65,7 +54,7 @@ var TodoContainer = React.createClass({displayName: "TodoContainer",
   render: function() {
     return (
       React.createElement("div", {className: "todoContainer"}, 
-        React.createElement("h1", null, "Newtopia To Do List:"), 
+        React.createElement("h1", null, "TodoContainer."), 
         React.createElement(TodoList, {data: this.state.data, onTodoEdit: this.handleTodoEdit, onTodoDelete: this.handleTodoDelete}), 
         React.createElement(TodoAdd, {onTodoSubmit: this.handleTodoSubmit})
       )
@@ -73,19 +62,29 @@ var TodoContainer = React.createClass({displayName: "TodoContainer",
   }
 });
 
+var Todo = React.createClass({displayName: "Todo",
+  render: function() {
+    return (
+      React.createElement("li", {className: "todo", ref: "todoItem"}, 
+        this.props.children
+      )
+    );
+  }
+});
+
 var TodoList = React.createClass({displayName: "TodoList",
-  handleEdit: function(idToEdit) {
-    var itemToEdit = this.state.itemToEdit; // TODO: This doesn't yet work, probably linked to the bind(this) below
-    this.props.onTodoEdit(idToEdit, {Item: itemToEdit});
-  }.bind(this),
+  handleEdit: function(itemToEdit) {
+    this.props.onTodoEdit(itemToEdit);
+  },
   handleDelete: function(itemToDelete) {
     this.props.onTodoDelete(itemToDelete);
   },
   render: function() {
     var todoNodes = this.props.data.map(function(todo, index) {
       return (
-        React.createElement(Todo, {key: index, onEdit: this.handleEdit.bind(this, todo.Id)}, 
+        React.createElement(Todo, {key: index}, 
           todo.Item, 
+          React.createElement("button", {onClick: this.handleEdit.bind(this, todo.Id)}, "Edit"), 
           React.createElement("button", {onClick: this.handleDelete.bind(this, todo.Id)}, "Del")
         )
       );
@@ -93,22 +92,6 @@ var TodoList = React.createClass({displayName: "TodoList",
     return (
       React.createElement("ul", {className: "todoList"}, 
         todoNodes
-      )
-    );
-  }
-});
-
-var Todo = React.createClass({displayName: "Todo",
-  handleInput: function() {
-    var update = React.findDOMNode(this.refs.todoItem).value;
-    this.setState({itemToEdit: update});
-
-    this.props.onEdit();
-  },
-  render: function() {
-    return (
-      React.createElement("li", {className: "todo", contentEditable: true, onInput: this.handleInput, ref: "todoItem"}, 
-        this.props.children
       )
     );
   }
@@ -122,7 +105,7 @@ var TodoAdd = React.createClass({displayName: "TodoAdd",
     if(!itemToAdd) {
       return;
     }
-    this.props.onTodoSubmit({Item: itemToAdd});
+    this.props.onTodoSubmit({Item: itemToAdd})
     React.findDOMNode(this.refs.itemRef).value = '';
     return;
   },

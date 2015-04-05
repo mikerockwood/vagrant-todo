@@ -19,23 +19,7 @@ var TodoContainer = React.createClass({displayName: "TodoContainer",
       type: "POST",
       data: JSON.stringify(item), // TODO: There is a syntax error happening here, fix it
       success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString())
-      }.bind(this)
-    });
-
-    this.loadTodoListFromServer();
-  },
-  handleTodoEdit: function(idToEdit, itemToEdit) {
-    $.ajax({
-      dataType: "json",
-      url: this.props.url + "/" + idToEdit,
-      type: "PUT",
-      data: JSON.stringify(itemToEdit),
-      success: function(data) {
-        this.setState({data: data});
+        this.setState({data: data})
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString())
@@ -47,45 +31,54 @@ var TodoContainer = React.createClass({displayName: "TodoContainer",
       url: this.props.url + "/" + itemToDelete,
       type: "DELETE",
       success: function(data) {
-        this.setState({data: data});
+        this.setState({data: data})
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString())
       }.bind(this)
     });
-
-    this.loadTodoListFromServer();
   },
   getInitialState: function() {
     return {data: []};
   },
   componentDidMount: function() {
     this.loadTodoListFromServer();
+    setInterval(this.loadTodoListFromServer, this.props.pollInterval); // HACK: Change this to websockets or similar
   },
   render: function() {
     return (
       React.createElement("div", {className: "todoContainer"}, 
-        React.createElement("h1", null, "Newtopia To Do List:"), 
-        React.createElement(TodoList, {data: this.state.data, onTodoEdit: this.handleTodoEdit, onTodoDelete: this.handleTodoDelete}), 
+        React.createElement("h1", null, "TodoContainer."), 
+        React.createElement(TodoList, {data: this.state.data, onTodoDelete: this.handleTodoDelete}), 
         React.createElement(TodoAdd, {onTodoSubmit: this.handleTodoSubmit})
       )
     );
   }
 });
 
+var Todo = React.createClass({displayName: "Todo",
+  render: function() {
+    return (
+      React.createElement("li", {className: "todo", ref: "todoItem"}, 
+        this.props.children
+      )
+    );
+  }
+});
+
 var TodoList = React.createClass({displayName: "TodoList",
-  handleEdit: function(idToEdit) {
-    var itemToEdit = this.state.itemToEdit; // TODO: This doesn't yet work, probably linked to the bind(this) below
-    this.props.onTodoEdit(idToEdit, {Item: itemToEdit});
-  }.bind(this),
+  handleEdit: function(itemToEdit) {
+    console.log("bla");
+  },
   handleDelete: function(itemToDelete) {
     this.props.onTodoDelete(itemToDelete);
   },
   render: function() {
     var todoNodes = this.props.data.map(function(todo, index) {
       return (
-        React.createElement(Todo, {key: index, onEdit: this.handleEdit.bind(this, todo.Id)}, 
+        React.createElement(Todo, {key: index}, 
           todo.Item, 
+          React.createElement("button", {onClick: this.handleEdit.bind(this, todo.Id)}, "Edit"), 
           React.createElement("button", {onClick: this.handleDelete.bind(this, todo.Id)}, "Del")
         )
       );
@@ -93,22 +86,6 @@ var TodoList = React.createClass({displayName: "TodoList",
     return (
       React.createElement("ul", {className: "todoList"}, 
         todoNodes
-      )
-    );
-  }
-});
-
-var Todo = React.createClass({displayName: "Todo",
-  handleInput: function() {
-    var update = React.findDOMNode(this.refs.todoItem).value;
-    this.setState({itemToEdit: update});
-
-    this.props.onEdit();
-  },
-  render: function() {
-    return (
-      React.createElement("li", {className: "todo", contentEditable: true, onInput: this.handleInput, ref: "todoItem"}, 
-        this.props.children
       )
     );
   }
@@ -122,7 +99,7 @@ var TodoAdd = React.createClass({displayName: "TodoAdd",
     if(!itemToAdd) {
       return;
     }
-    this.props.onTodoSubmit({Item: itemToAdd});
+    this.props.onTodoSubmit({Item: itemToAdd})
     React.findDOMNode(this.refs.itemRef).value = '';
     return;
   },
@@ -137,6 +114,6 @@ var TodoAdd = React.createClass({displayName: "TodoAdd",
 });
 
 React.render(
-  React.createElement(TodoContainer, {url: "/todo"}),
+  React.createElement(TodoContainer, {url: "/todo", pollInterval: 5000}), // HACK: replace polling with websockets
   document.getElementById('content')
 );
