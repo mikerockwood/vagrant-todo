@@ -4,7 +4,7 @@
   margin-right: auto;
 }
 
-ul {
+ol {
   list-style: none;
   margin-top: 25px;
   padding-left: 5px;
@@ -16,7 +16,7 @@ li {
 }
 
 .todoListItem {
-  width: 212px;
+  width: 250px;
 }
   .todoListItem button {
     float: right;
@@ -32,6 +32,7 @@ li {
 }
   .todoAdd input[type=text] {
     width: 200px;
+    margin-right:6px;
   }
   .todoAdd input[type=submit] {
     width: 40px;

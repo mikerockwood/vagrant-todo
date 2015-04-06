@@ -2,7 +2,7 @@
 Holds all the components of the Todo list, and serves as a central point for
 event handling.
 */
-var TodoContainer = React.createClass({
+var TodoContainer = React.createClass({displayName: "TodoContainer",
   loadTodoListFromServer: function() {
     $.ajax({
       dataType: "json",
@@ -33,6 +33,8 @@ var TodoContainer = React.createClass({
     this.loadTodoListFromServer();
   },
   handleTodoEdit: function(idToEdit, itemToEdit) {
+
+    console.error(itemToEdit)
     $.ajax({
       dataType: "json",
       url: this.props.url + "/" + idToEdit,
@@ -45,8 +47,6 @@ var TodoContainer = React.createClass({
         console.error(this.props.url, status, err.toString())
       }.bind(this)
     });
-
-    this.loadTodoListFromServer();
   },
   handleTodoDelete: function(itemToDelete) {
     $.ajax({
@@ -70,11 +70,11 @@ var TodoContainer = React.createClass({
   },
   render: function() {
     return (
-      <div className="todoContainer">
-        <h1>Newtopia To Do List:</h1>
-        <TodoList data={this.state.data} onTodoEdit={this.handleTodoEdit} onTodoDelete={this.handleTodoDelete} />
-        <TodoAdd onTodoSubmit={this.handleTodoSubmit} />
-      </div>
+      React.createElement("div", {className: "todoContainer"}, 
+        React.createElement("h1", null, "Newtopia To Do List:"), 
+        React.createElement(TodoList, {data: this.state.data, onTodoEdit: this.handleTodoEdit, onTodoDelete: this.handleTodoDelete}), 
+        React.createElement(TodoAdd, {onTodoSubmit: this.handleTodoSubmit})
+      )
     );
   }
 });
@@ -83,10 +83,9 @@ var TodoContainer = React.createClass({
 Contains the list portion of the Todo list. Renders a list of Todo items and the
 buttons to delete them.
 */
-var TodoList = React.createClass({
+var TodoList = React.createClass({displayName: "TodoList",
   handleEdit: function(idToEdit) {
-    console.log(idToEdit)
-    var itemToEdit = React.findDOMNode(this.refs["todoItem" + idToEdit]).value;
+    var itemToEdit = React.findDOMNode(this.refs['todoItem']).value;
     this.props.onTodoEdit(idToEdit, {Item: itemToEdit});
   },
   handleDelete: function(itemToDelete) {
@@ -95,25 +94,51 @@ var TodoList = React.createClass({
   render: function() {
     var todoNodes = this.props.data.map(function(todo, index) {
       return (
-        <li className="todoListItem" key={todo.Id}>
-          <textarea className="todo" value={todo.Item} onChange={this.handleEdit.bind(this, todo.Id)} ref={"todoItem" + todo.Id} />
-          <button onClick={this.handleDelete.bind(this, todo.Id)}>Del</button>
-        </li>
+        React.createElement("li", {className: "todoListItem"}, 
+
+          React.createElement("div", {className: "todo", key: index, contentEditable: true, onInput: this.handleEdit.bind(this, todo.Id), ref: "todoItem"}, 
+            todo.Item
+          ), 
+          React.createElement("button", {onClick: this.handleDelete.bind(this, todo.Id)}, "Del")
+        )
       );
     }.bind(this)); // TODO: Figure out why this complains that this.props.data.map is not a function when you DELETE
     return (
-      <ol className="todoList">
-        {todoNodes}
-      </ol>
+      React.createElement("ul", {className: "todoList"}, 
+        todoNodes
+      )
     );
   }
 });
+
+
+// <Todo key={index} onEdit={this.handleEdit.bind(this, todo.Id)}>
+//   {todo.Item}
+// </Todo>
+/*
+A single element in the todo list. This class holds the div that
+*/
+// var Todo = React.createClass({
+//   handleInput: function() {
+//     var update = React.findDOMNode(this.refs.todoItem).value;
+//     this.setState({itemToEdit: update});
+//
+//     this.props.onEdit();
+//   },
+//   render: function() {
+//     return (
+//       <div className="todo" contentEditable={true} onInput={this.handleInput} ref="todoItem">
+//         {this.props.children}
+//       </div>
+//     );
+//   }
+// });
 
 /*
  Contains the form that allows adding new items to the Todo list. Generates the
  onTodoSubmit event when the form is submitted.
 */
-var TodoAdd = React.createClass({
+var TodoAdd = React.createClass({displayName: "TodoAdd",
   handleSubmit: function(submitEvent) {
     submitEvent.preventDefault();
 
@@ -127,10 +152,10 @@ var TodoAdd = React.createClass({
   },
   render: function() {
     return (
-      <form className="todoAdd" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="What do you need to do?" ref="itemRef" />
-        <input type="submit" value="Add" />
-      </form>
+      React.createElement("form", {className: "todoAdd", onSubmit: this.handleSubmit}, 
+        React.createElement("input", {type: "text", placeholder: "What do you need to do?", ref: "itemRef"}), 
+        React.createElement("input", {type: "submit", value: "Add"})
+      )
     );
   }
 });
@@ -139,6 +164,6 @@ var TodoAdd = React.createClass({
 Render the Todo container, which holds all the Todo list objects.
 */
 React.render(
-  <TodoContainer url="/todo" />,
+  React.createElement(TodoContainer, {url: "/todo"}),
   document.getElementById('content')
 );
