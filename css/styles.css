@@ -1,5 +1,7 @@
 #content {
-  width: 212px;
+  width: 250px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 ul {
@@ -8,6 +10,29 @@ ul {
   padding-left: 5px;
   line-height: 25px;
 }
-button {
-  float: right;
+
+li {
+  overflow: auto;
 }
+
+.todoListItem {
+  width: 212px;
+}
+  .todoListItem button {
+    float: right;
+    width: 40px;
+  }
+.todo {
+  float: left;
+  width: 200px;
+}
+.todoAdd {
+  position: relative;
+  top: 20px;
+}
+  .todoAdd input[type=text] {
+    width: 200px;
+  }
+  .todoAdd input[type=submit] {
+    width: 40px;
+  }

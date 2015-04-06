@@ -84,10 +84,12 @@ var TodoList = React.createClass({
   render: function() {
     var todoNodes = this.props.data.map(function(todo, index) {
       return (
-        <Todo key={index} onEdit={this.handleEdit.bind(this, todo.Id)}>
-          {todo.Item}
+        <li className="todoListItem">
+          <Todo key={index} onEdit={this.handleEdit.bind(this, todo.Id)}>
+            {todo.Item}
+          </Todo>
           <button onClick={this.handleDelete.bind(this, todo.Id)}>Del</button>
-        </Todo>
+        </li>
       );
     }.bind(this)); // TODO: Figure out why this complains that this.props.data.map is not a function when you DELETE
     return (
@@ -107,9 +109,9 @@ var Todo = React.createClass({
   },
   render: function() {
     return (
-      <li className="todo" contentEditable={true} onInput={this.handleInput} ref="todoItem">
+      <div className="todo" contentEditable={true} onInput={this.handleInput} ref="todoItem">
         {this.props.children}
-      </li>
+      </div>
     );
   }
 });
