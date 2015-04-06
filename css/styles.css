@@ -11,12 +11,9 @@ ol {
   line-height: 25px;
 }
 
-li {
-  overflow: auto;
-}
-
 .todoListItem {
   width: 250px;
+  overflow: auto;
 }
   .todoListItem button {
     float: right;
@@ -25,7 +22,11 @@ li {
 .todo {
   float: left;
   width: 200px;
+  font-family: inherit;
+  font-size: 16px;
+  border-style: none;
 }
+
 .todoAdd {
   position: relative;
   top: 20px;

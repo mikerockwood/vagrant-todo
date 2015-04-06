@@ -86,7 +86,7 @@ buttons to delete them.
 var TodoList = React.createClass({displayName: "TodoList",
   handleEdit: function(idToEdit) {
     console.log(idToEdit)
-    var itemToEdit = React.findDOMNode(this.refs["todoItem" + idToEdit]).value.trim();
+    var itemToEdit = React.findDOMNode(this.refs["todoItem" + idToEdit]).value;
     this.props.onTodoEdit(idToEdit, {Item: itemToEdit});
   },
   handleDelete: function(itemToDelete) {
