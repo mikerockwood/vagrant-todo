@@ -40,3 +40,4 @@ Thumbs.db
 .*.swo
 # Development code
 golang/*
+react/build/.module-cache/*
